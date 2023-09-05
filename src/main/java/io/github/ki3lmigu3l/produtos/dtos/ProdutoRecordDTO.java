@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ProdutoRecordDTO(@NotBlank String nome, @NotNull BigDecimal valor) {
-    
+
 }
