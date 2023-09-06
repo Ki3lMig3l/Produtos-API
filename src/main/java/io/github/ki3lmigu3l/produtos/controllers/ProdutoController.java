@@ -41,4 +41,17 @@ public class ProdutoController {
 
         return ResponseEntity.status(HttpStatus.OK).body(produtoModelOptional.get());
     }
+
+    @PutMapping("/produtos/{id}")
+    public ResponseEntity<Object> uptadeProduto(@PathVariable(value = "id") UUID id, @RequestBody ProdutoRecordDTO produtoRecordDTO){
+        Optional<ProdutoModel> produtoModelOptional = produtoRepositorio.findById(id);
+        if (produtoModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
+        }
+
+        var produtoModel = produtoModelOptional.get();
+        BeanUtils.copyProperties(produtoRecordDTO, produtoModel);
+        return ResponseEntity.status(HttpStatus.OK).body(produtoRepositorio.save(produtoModel));
+    }
+
 }
