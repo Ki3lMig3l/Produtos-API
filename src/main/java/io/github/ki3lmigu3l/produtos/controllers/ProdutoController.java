@@ -3,6 +3,7 @@ package io.github.ki3lmigu3l.produtos.controllers;
 import io.github.ki3lmigu3l.produtos.dtos.ProdutoRecordDTO;
 import io.github.ki3lmigu3l.produtos.model.ProdutoModel;
 import io.github.ki3lmigu3l.produtos.repositories.ProdutoRepositorio;
+import io.github.ki3lmigu3l.produtos.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,12 @@ public class ProdutoController {
     @Autowired
     private ProdutoRepositorio produtoRepositorio;
 
+    @Autowired
+    private ProdutoService produtoService;
+
     @PostMapping("/produtos")
     public ResponseEntity<ProdutoModel> salvarProduto(@RequestBody @Valid ProdutoRecordDTO produtoRecordDTO){
-        var produtoModel = new ProdutoModel();
-        BeanUtils.copyProperties(produtoRecordDTO, produtoModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoRepositorio.save(produtoModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.salvar(produtoRecordDTO));
     }
 
     @GetMapping("/produtos")
@@ -43,7 +45,7 @@ public class ProdutoController {
     }
 
     @PutMapping("/produtos/{id}")
-    public ResponseEntity<Object> uptadeProduto(@PathVariable(value = "id") UUID id, @RequestBody ProdutoRecordDTO produtoRecordDTO){
+    public ResponseEntity<Object> uptadeProduto(@PathVariable(value = "id") UUID id, @RequestBody @Valid ProdutoRecordDTO produtoRecordDTO){
         Optional<ProdutoModel> produtoModelOptional = produtoRepositorio.findById(id);
         if (produtoModelOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
