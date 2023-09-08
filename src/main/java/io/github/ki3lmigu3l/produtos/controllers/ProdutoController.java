@@ -5,7 +5,6 @@ import io.github.ki3lmigu3l.produtos.model.ProdutoModel;
 import io.github.ki3lmigu3l.produtos.repositories.ProdutoRepositorio;
 import io.github.ki3lmigu3l.produtos.service.ProdutoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,6 @@ import java.util.UUID;
 public class ProdutoController {
 
     @Autowired
-    private ProdutoRepositorio produtoRepositorio;
-
-    @Autowired
     private ProdutoService produtoService;
 
     @PostMapping("/produtos")
@@ -31,12 +27,12 @@ public class ProdutoController {
 
     @GetMapping("/produtos")
     public ResponseEntity<List<ProdutoModel>> obterProduto(){
-        return ResponseEntity.status(HttpStatus.OK).body(produtoRepositorio.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(produtoService.obterAllProdutos());
     }
 
     @GetMapping("/produtos/{id}")
     public ResponseEntity<Object> obterProdutoById(@PathVariable(value = "id") UUID id){
-        Optional<ProdutoModel> produtoModelOptional = produtoRepositorio.findById(id);
+        Optional<ProdutoModel> produtoModelOptional = produtoService.obterProdutoById(id);
         if(produtoModelOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
@@ -46,24 +42,22 @@ public class ProdutoController {
 
     @PutMapping("/produtos/{id}")
     public ResponseEntity<Object> uptadeProduto(@PathVariable(value = "id") UUID id, @RequestBody @Valid ProdutoRecordDTO produtoRecordDTO){
-        Optional<ProdutoModel> produtoModelOptional = produtoRepositorio.findById(id);
+        Optional<ProdutoModel> produtoModelOptional = produtoService.obterProdutoById(id);
         if (produtoModelOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
 
-        var produtoModel = produtoModelOptional.get();
-        BeanUtils.copyProperties(produtoRecordDTO, produtoModel);
-        return ResponseEntity.status(HttpStatus.OK).body(produtoRepositorio.save(produtoModel));
+        return ResponseEntity.status(HttpStatus.OK).body(produtoService.atualizarProduto(produtoModelOptional,produtoRecordDTO));
     }
 
     @DeleteMapping("/produtos/{id}")
     public ResponseEntity<Object> deleteProduto (@PathVariable(value = "id") UUID id){
-        Optional<ProdutoModel> produtoModelOptional = produtoRepositorio.findById(id);
+        Optional<ProdutoModel> produtoModelOptional = produtoService.obterProdutoById(id);
         if (produtoModelOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
 
-        produtoRepositorio.delete(produtoModelOptional.get());
+        produtoService.deletarProduto(produtoModelOptional);
         return ResponseEntity.status(HttpStatus.OK).body("Produto deletado com sucesso");
     }
 }
