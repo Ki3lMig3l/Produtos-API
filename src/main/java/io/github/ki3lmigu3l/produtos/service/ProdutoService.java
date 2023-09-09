@@ -9,9 +9,8 @@ import java.util.UUID;
 
 public interface ProdutoService {
 
-    ProdutoModel salvar(ProdutoRecordDTO produtoRecordDTO);
-    List<ProdutoModel> obterAllProdutos();
-    Optional<ProdutoModel> obterProdutoById(UUID id);
-    Optional<ProdutoModel> atualizarProduto(Optional<ProdutoModel> produtoModelOptional, ProdutoRecordDTO produtoRecordDTO);
-    void deletarProduto(Optional<ProdutoModel> produtoModelOptional);
+    ProdutoModel save(ProdutoModel produtoModel);
+    Optional<ProdutoModel> findById(UUID id);
+    List<ProdutoModel> findAll();
+    void delete(ProdutoModel produtoModel);
 }
