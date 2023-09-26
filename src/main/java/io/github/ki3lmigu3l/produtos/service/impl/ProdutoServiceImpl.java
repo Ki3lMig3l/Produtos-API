@@ -4,6 +4,8 @@ import io.github.ki3lmigu3l.produtos.model.ProdutoModel;
 import io.github.ki3lmigu3l.produtos.repositories.ProdutoRepositorio;
 import io.github.ki3lmigu3l.produtos.service.ProdutoService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public List<ProdutoModel> findAll() {
-        return produtoRepositorio.findAll();
+    public Page<ProdutoModel> findAll(Pageable pageable) {
+        return produtoRepositorio.findAll(pageable);
     }
 
     @Override
